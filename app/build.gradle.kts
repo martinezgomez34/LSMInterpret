@@ -7,9 +7,7 @@ plugins {
 
 android {
     namespace = "com.eduard034.lmsinterpret"
-    compileSdk {
-        version = release(34)
-    }
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.eduard034.lmsinterpret"

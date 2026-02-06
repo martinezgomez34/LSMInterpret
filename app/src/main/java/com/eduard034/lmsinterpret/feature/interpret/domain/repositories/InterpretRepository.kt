@@ -4,4 +4,6 @@ import com.eduard034.lmsinterpret.feature.interpret.domain.entities.Sena
 
 interface InterpretRepository {
     suspend fun interpretarFrase(texto: String): List<Sena>
+
+    suspend fun getSenaByName(nombre: String): Sena?
 }

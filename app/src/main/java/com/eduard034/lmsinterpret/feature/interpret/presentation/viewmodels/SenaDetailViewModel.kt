@@ -27,12 +27,11 @@ class SenaDetailViewModel(
         _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             try {
-                // Aquí estamos reutilizando el repositorio general
-                // En un futuro ideal, debería tener un metodo 'getSenaByName' en el repo
-                val result = repository.interpretarFrase(nombre)
 
-                if (result.isNotEmpty()) {
-                    _uiState.update { it.copy(isLoading = false, sena = result.first()) }
+                val result = repository.getSenaByName(nombre)
+
+                if (result != null) {
+                    _uiState.update { it.copy(isLoading = false, sena = result) }
                 } else {
                     _uiState.update { it.copy(isLoading = false, error = "No encontrado") }
                 }

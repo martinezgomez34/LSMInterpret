@@ -11,8 +11,21 @@ class InterpretRepositoryImpl(
 ) : InterpretRepository {
 
     override suspend fun interpretarFrase(texto: String): List<Sena> {
-        val request = InterpretRequestDto(texto)
-        val response = api.interpretar(request)
-        return response.secuencia.map { it.toDomain() }
+        return try {
+            val response = api.interpretar(InterpretRequestDto(texto = texto))
+            response.secuencia.map { it.toDomain() }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    override suspend fun getSenaByName(nombre: String): Sena? {
+        return try {
+            val senaDto = api.getSena(nombre)
+
+            senaDto.toDomain()
+        } catch (e: Exception) {
+            null
+        }
     }
 }
