@@ -7,7 +7,6 @@ fun SenaDto.toDomain(): Sena {
     return Sena(
         id = this.id.toString(),
         nombre = this.nombre,
-        // Tu API devuelve URLs relativas o absolutas? Si son relativas agregamos el host aquí si hace falta
         img = this.img,
         descripcion = this.descripcion,
         categoria = this.categoria

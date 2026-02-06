@@ -12,7 +12,7 @@ data class InterpretResponseDto(
 )
 
 data class SenaDto(
-    val id: Any, // Puede ser int o string según tu API
+    val id: Any,
     val nombre: String,
     val img: List<String>,
     val descripcion: String,

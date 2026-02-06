@@ -27,8 +27,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-        // 1. Inicializar Container Global
         val appContainer = AppContainer(applicationContext)
 
         val interpretModule = InterpretModule(appContainer)
@@ -38,18 +36,16 @@ class MainActivity : ComponentActivity() {
 
             NavHost(navController = navController, startDestination = "interpret_screen") {
 
-                // Pantalla 1: Traductor
                 composable("interpret_screen") {
                     InterpretScreen(
                         factory = interpretModule.provideInterpretViewModelFactory(),
                         onSenaClick = { sena ->
-                            // Navegamos pasando el nombre como argumento
                             navController.navigate("detail_screen/${sena.nombre}")
                         }
                     )
                 }
 
-                // Pantalla 2: Detalle (Recibe el nombre)
+
                 composable(
                     route = "detail_screen/{nombreSena}",
                     arguments = listOf(navArgument("nombreSena") { type = NavType.StringType })
@@ -64,7 +60,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            // Nota: Aquí podrías agregar tu BottomNavigation si quieres que sea persistente
         }
     }
 }

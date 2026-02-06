@@ -9,7 +9,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class AppContainer(context: Context) {
 
-    // Apunta a tu servidor Node.js (10.0.2.2 es localhost desde el emulador)
     private val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl("http://10.0.2.2:3000/")
         .addConverterFactory(GsonConverterFactory.create())

@@ -29,9 +29,9 @@ class SenaDetailViewModel(
         _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             try {
-                // Aquí deberíamos tener un método específico en el repo,
+                // Aqui deberiamos tener un metodo específico en el repo,
                 // pero por ahora simularemos que interpretamos la palabra exacta
-                // OJO: Lo ideal es agregar "getSenaByName" en tu repositorio.
+                // Lo ideal es agregar "getSenaByName" en tu repositorio.
                 val result = repository.interpretarFrase(nombre)
 
                 if (result.isNotEmpty()) {
@@ -46,7 +46,7 @@ class SenaDetailViewModel(
     }
 }
 
-// Factory para inyección manual
+
 class SenaDetailViewModelFactory(
     private val repository: InterpretRepository
 ) : ViewModelProvider.Factory {

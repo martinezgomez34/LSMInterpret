@@ -24,16 +24,15 @@ import com.eduard034.lmsinterpret.feature.interpret.domain.entities.Sena
 @Composable
 fun InterpretScreen(
     factory: InterpretViewModelFactory,
-    onSenaClick: (Sena) -> Unit // Navegación al detalle
+    onSenaClick: (Sena) -> Unit // Navegacion al detalle
 ) {
-    // Inyección manual del ViewModel usando el Factory
+    // Inyeccion manual del ViewModel usando el Factory
     val viewModel: InterpretViewModel = viewModel(factory = factory)
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     var textInput by remember { mutableStateOf("") }
 
-    // Colores basados en tu diseño
-    val LightGrayBg = Color(0xFFF0F0F0) // Fondo gris claro para inputs y botones
+    val LightGrayBg = Color(0xFFF0F0F0)
 
     Column(
         modifier = Modifier
@@ -41,7 +40,7 @@ fun InterpretScreen(
             .background(Color.White)
             .padding(horizontal = 24.dp, vertical = 40.dp)
     ) {
-        // 1. Título
+        // Titulo
         Text(
             text = "Traductor",
             fontSize = 32.sp,
@@ -59,14 +58,14 @@ fun InterpretScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // 2. Input (TextField redondeado)
+        // Input (TextField)
         TextField(
             value = textInput,
             onValueChange = {
                 textInput = it
                 viewModel.onTextChanged(it)
             },
-            placeholder = { Text("Ejem: \"Hola buenos dias\"", color = Color.Gray) },
+            placeholder = { Text("Ejem: \"Hola, buenos dias\"", color = Color.Gray) },
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(24.dp))
@@ -83,7 +82,7 @@ fun InterpretScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // 3. Resultados
+        // Resultados
         if (state.isLoading) {
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
@@ -108,14 +107,14 @@ fun SenaItemButton(sena: Sena, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp)
-            .clip(RoundedCornerShape(24.dp)) // Muy redondeado como en la imagen
+            .clip(RoundedCornerShape(24.dp))
             .background(Color(0xFFE0E0E0))
             .clickable { onClick() }
             .padding(horizontal = 24.dp),
         contentAlignment = Alignment.CenterStart
     ) {
         Text(
-            text = sena.nombre, // Muestra "Hola" o "Buenos Días"
+            text = sena.nombre, // Muestra "Hola" o "Buenos Dias"
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
             color = Color.Black

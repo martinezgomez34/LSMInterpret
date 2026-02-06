@@ -25,7 +25,7 @@ class InterpretViewModel(
     val uiState = _uiState.asStateFlow()
 
     fun onTextChanged(texto: String) {
-        // Debounce simple o llamada directa
+        // Llamada directa
         _uiState.update { it.copy(isLoading = true, error = null) }
 
         viewModelScope.launch {

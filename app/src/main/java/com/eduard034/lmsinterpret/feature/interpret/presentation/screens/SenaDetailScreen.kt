@@ -27,12 +27,12 @@ import com.eduard034.lmsinterpret.feature.interpret.presentation.viewmodels.Sena
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SenaDetailScreen(
-    nombreSena: String, // El ID o nombre que recibimos de la pantalla anterior
+    nombreSena: String, // nombre que recibimos de la pantalla anterior, lo ideal seria el id
     factory: SenaDetailViewModelFactory,
     onBackClick: () -> Unit
 ) {
     val viewModel: SenaDetailViewModel = viewModel(factory = factory)
-    // Cargamos los datos al iniciar
+    // cargamos los datos al iniciar
     LaunchedEffect(nombreSena) {
         viewModel.loadSena(nombreSena)
     }
@@ -43,7 +43,6 @@ fun SenaDetailScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    // Si quieres que diga "Hola" en la barra superior como en tu foto
                     Text(state.sena?.nombre ?: "Detalle", fontWeight = FontWeight.SemiBold)
                 },
                 navigationIcon = {
@@ -52,12 +51,12 @@ fun SenaDetailScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* Acción menú */ }) {
+                    IconButton(onClick = { /* accion menu */ }) {
                         Icon(Icons.Default.MoreVert, contentDescription = "Opciones")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White // Fondo blanco como la imagen
+                    containerColor = Color.White //
                 )
             )
         },
@@ -77,8 +76,8 @@ fun SenaDetailScreen(
                 ) {
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // 1. Imágenes (Lado a lado o Scroll si son muchas)
-                    // Usamos LazyRow para que si hay 3 imágenes, se pueda deslizar
+                    // Imagenes lado a lado o Scroll si son muchas
+                    // Usamos LazyRow para que si hay 3 imagenes, se pueda deslizar
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         modifier = Modifier.fillMaxWidth().height(200.dp)
@@ -88,17 +87,17 @@ fun SenaDetailScreen(
                                 model = imgUrl,
                                 contentDescription = sena.nombre,
                                 modifier = Modifier
-                                    .width(160.dp) // Ancho fijo para que se vean dos casi completas
+                                    .width(160.dp)
                                     .fillMaxHeight()
                                     .clip(RoundedCornerShape(16.dp)),
-                                contentScale = ContentScale.Crop // O Fit si quieres ver la mano entera sin cortes
+                                contentScale = ContentScale.Crop
                             )
                         }
                     }
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // 2. Título Principal
+                    // Titulo Principal
                     Text(
                         text = sena.nombre,
                         fontSize = 32.sp,
@@ -106,7 +105,7 @@ fun SenaDetailScreen(
                         color = Color.Black
                     )
 
-                    // 3. Categoría
+                    // Categoria
                     Text(
                         text = sena.categoria,
                         fontSize = 16.sp,
@@ -116,7 +115,7 @@ fun SenaDetailScreen(
 
                     Spacer(modifier = Modifier.height(32.dp))
 
-                    // 4. Descripción Label
+                    // Descripcion Label
                     Text(
                         text = "Descripción:",
                         fontSize = 14.sp,
@@ -126,11 +125,11 @@ fun SenaDetailScreen(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // 5. Cuerpo de descripción
+                    // Cuerpo de descripcion
                     Text(
                         text = sena.descripcion,
                         fontSize = 16.sp,
-                        color = Color(0xFF4A4A4A), // Un gris oscuro para lectura
+                        color = Color(0xFF4A4A4A),
                         lineHeight = 24.sp
                     )
                 }
