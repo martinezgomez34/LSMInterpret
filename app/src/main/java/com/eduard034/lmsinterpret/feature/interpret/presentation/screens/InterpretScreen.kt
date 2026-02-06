@@ -17,84 +17,109 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.eduard034.lmsinterpret.core.data.local.UserSession
 import com.eduard034.lmsinterpret.feature.interpret.presentation.viewmodels.InterpretViewModel
 import com.eduard034.lmsinterpret.feature.interpret.presentation.viewmodels.InterpretViewModelFactory
 import com.eduard034.lmsinterpret.feature.interpret.domain.entities.Sena
+import com.eduard034.lmsinterpret.shared.components.HamburgerTopBar // Ajusta tu import si es necesario
+import kotlinx.coroutines.launch
 
 @Composable
 fun InterpretScreen(
     factory: InterpretViewModelFactory,
-    onSenaClick: (Sena) -> Unit // Navegacion al detalle
+    userSession: UserSession,
+    onSenaClick: (Sena) -> Unit,
+    onNavigateToProfile: () -> Unit, // <--- 1. NUEVO PARÁMETRO
+    onLogoutSuccess: () -> Unit
 ) {
-    // Inyeccion manual del ViewModel usando el Factory
     val viewModel: InterpretViewModel = viewModel(factory = factory)
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    var textInput by remember { mutableStateOf("") }
+    val userName by userSession.userName.collectAsState(initial = "Usuario")
+    val coroutineScope = rememberCoroutineScope()
 
+    var textInput by remember { mutableStateOf("") }
     val LightGrayBg = Color(0xFFF0F0F0)
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(horizontal = 24.dp, vertical = 40.dp)
-    ) {
-        // Titulo
-        Text(
-            text = "Traductor",
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = "Escribe aquí lo que quieras decir en LSM",
-            fontSize = 14.sp,
-            color = Color.Gray
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        // Input (TextField)
-        TextField(
-            value = textInput,
-            onValueChange = {
-                textInput = it
-                viewModel.onTextChanged(it)
-            },
-            placeholder = { Text("Ejem: \"Hola, buenos dias\"", color = Color.Gray) },
+    Scaffold(
+        topBar = {
+            HamburgerTopBar(
+                title = "LSM Interpret",
+                userName = userName ?: "Usuario",
+                onProfileClick = onNavigateToProfile, // <--- 2. CONECTAMOS AQUÍ
+                onSettingsClick = { /* TODO: Navegar a config */ },
+                onLogoutClick = {
+                    coroutineScope.launch {
+                        userSession.clear()
+                        onLogoutSuccess()
+                    }
+                }
+            )
+        },
+        containerColor = Color.White
+    ) { innerPadding ->
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(24.dp))
-                .background(LightGrayBg),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = LightGrayBg,
-                unfocusedContainerColor = LightGrayBg,
-                disabledContainerColor = LightGrayBg,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
-            singleLine = true
-        )
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(horizontal = 24.dp)
+        ) {
+            Spacer(modifier = Modifier.height(24.dp))
 
-        Spacer(modifier = Modifier.height(32.dp))
+            Text(
+                text = "Traductor",
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
 
-        // Resultados
-        if (state.isLoading) {
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        } else if (state.error != null) {
-            Text(text = "Error: ${state.error}", color = Color.Red)
-        } else {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(state.items) { sena ->
-                    SenaItemButton(sena = sena, onClick = { onSenaClick(sena) })
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "Escribe aquí lo que quieras decir en LSM",
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            TextField(
+                value = textInput,
+                onValueChange = {
+                    textInput = it
+                    viewModel.onTextChanged(it)
+                },
+                placeholder = { Text("Ejem: \"Hola, buenos dias\"", color = Color.Gray) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(LightGrayBg),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = LightGrayBg,
+                    unfocusedContainerColor = LightGrayBg,
+                    disabledContainerColor = LightGrayBg,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+                ),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            if (state.isLoading) {
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            } else if (state.error != null) {
+                Text(text = "Error: ${state.error}", color = Color.Red)
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(bottom = 16.dp)
+                ) {
+                    items(state.items) { sena ->
+                        SenaItemButton(sena = sena, onClick = { onSenaClick(sena) })
+                    }
                 }
             }
         }
@@ -114,7 +139,7 @@ fun SenaItemButton(sena: Sena, onClick: () -> Unit) {
         contentAlignment = Alignment.CenterStart
     ) {
         Text(
-            text = sena.nombre, // Muestra "Hola" o "Buenos Dias"
+            text = sena.nombre,
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
             color = Color.Black
