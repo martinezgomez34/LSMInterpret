@@ -1,10 +1,8 @@
 package com.eduard034.lmsinterpret.feature.interpret.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.eduard034.lmsinterpret.feature.interpret.domain.entities.Sena
-import com.eduard034.lmsinterpret.feature.interpret.domain.usecases.InterpretarUseCase // O crear un GetSenaByNameUseCase
 import com.eduard034.lmsinterpret.feature.interpret.domain.repositories.InterpretRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +16,7 @@ data class SenaDetailUiState(
 )
 
 class SenaDetailViewModel(
-    private val repository: InterpretRepository // Reusamos el repositorio
+    private val repository: InterpretRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SenaDetailUiState())
@@ -29,9 +27,8 @@ class SenaDetailViewModel(
         _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             try {
-                // Aqui deberiamos tener un metodo específico en el repo,
-                // pero por ahora simularemos que interpretamos la palabra exacta
-                // Lo ideal es agregar "getSenaByName" en tu repositorio.
+                // Aquí estamos reutilizando el repositorio general
+                // En un futuro ideal, debería tener un metodo 'getSenaByName' en el repo
                 val result = repository.interpretarFrase(nombre)
 
                 if (result.isNotEmpty()) {
@@ -43,18 +40,5 @@ class SenaDetailViewModel(
                 _uiState.update { it.copy(isLoading = false, error = e.message) }
             }
         }
-    }
-}
-
-
-class SenaDetailViewModelFactory(
-    private val repository: InterpretRepository
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(SenaDetailViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return SenaDetailViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

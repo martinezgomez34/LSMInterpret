@@ -18,6 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.eduard034.lmsinterpret.core.di.AppContainer
+import com.eduard034.lmsinterpret.core.navigation.NavigationWrapper
 import com.eduard034.lmsinterpret.feature.interpret.di.InterpretModule
 import com.eduard034.lmsinterpret.feature.interpret.presentation.screens.InterpretScreen
 import com.eduard034.lmsinterpret.feature.interpret.presentation.screens.SenaDetailScreen
@@ -32,34 +33,7 @@ class MainActivity : ComponentActivity() {
         val interpretModule = InterpretModule(appContainer)
 
         setContent {
-            val navController = rememberNavController()
-
-            NavHost(navController = navController, startDestination = "interpret_screen") {
-
-                composable("interpret_screen") {
-                    InterpretScreen(
-                        factory = interpretModule.provideInterpretViewModelFactory(),
-                        onSenaClick = { sena ->
-                            navController.navigate("detail_screen/${sena.nombre}")
-                        }
-                    )
-                }
-
-
-                composable(
-                    route = "detail_screen/{nombreSena}",
-                    arguments = listOf(navArgument("nombreSena") { type = NavType.StringType })
-                ) { backStackEntry ->
-                    val nombre = backStackEntry.arguments?.getString("nombreSena") ?: ""
-
-                    SenaDetailScreen(
-                        nombreSena = nombre,
-                        factory = interpretModule.provideSenaDetailViewModelFactory(),
-                        onBackClick = { navController.popBackStack() }
-                    )
-                }
-            }
-
+            NavigationWrapper(interpretModule = interpretModule)
         }
     }
 }

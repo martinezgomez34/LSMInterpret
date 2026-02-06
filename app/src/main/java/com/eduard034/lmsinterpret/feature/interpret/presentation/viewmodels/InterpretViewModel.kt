@@ -1,7 +1,6 @@
 package com.eduard034.lmsinterpret.feature.interpret.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.eduard034.lmsinterpret.feature.interpret.domain.entities.Sena
 import com.eduard034.lmsinterpret.feature.interpret.domain.usecases.InterpretarUseCase
@@ -25,7 +24,7 @@ class InterpretViewModel(
     val uiState = _uiState.asStateFlow()
 
     fun onTextChanged(texto: String) {
-        // Llamada directa
+
         _uiState.update { it.copy(isLoading = true, error = null) }
 
         viewModelScope.launch {
@@ -42,18 +41,5 @@ class InterpretViewModel(
                 )
             }
         }
-    }
-}
-
-// Factory manual
-class InterpretViewModelFactory(
-    private val interpretarUseCase: InterpretarUseCase
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(InterpretViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return InterpretViewModel(interpretarUseCase) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
