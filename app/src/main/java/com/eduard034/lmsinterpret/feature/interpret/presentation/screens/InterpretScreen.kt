@@ -15,28 +15,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.eduard034.lmsinterpret.core.data.local.UserSession
-import com.eduard034.lmsinterpret.feature.interpret.presentation.viewmodels.InterpretViewModel
-import com.eduard034.lmsinterpret.feature.interpret.presentation.viewmodels.InterpretViewModelFactory
 import com.eduard034.lmsinterpret.feature.interpret.domain.entities.Sena
+import com.eduard034.lmsinterpret.feature.interpret.presentation.viewmodels.InterpretViewModel
 import com.eduard034.lmsinterpret.shared.components.HamburgerTopBar // Ajusta tu import si es necesario
-import kotlinx.coroutines.launch
 
 @Composable
 fun InterpretScreen(
-    factory: InterpretViewModelFactory,
-    userSession: UserSession,
+    viewModel: InterpretViewModel = hiltViewModel(),
     onSenaClick: (Sena) -> Unit,
-    onNavigateToProfile: () -> Unit, // <--- 1. NUEVO PARÁMETRO
+    onNavigateToProfile: () -> Unit,
     onLogoutSuccess: () -> Unit
 ) {
-    val viewModel: InterpretViewModel = viewModel(factory = factory)
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val userName by userSession.userName.collectAsState(initial = "Usuario")
-    val coroutineScope = rememberCoroutineScope()
+    // Obtenemos el nombre de usuario directamente del estado del ViewModel
+    val userName = state.userName ?: "Usuario"
 
     var textInput by remember { mutableStateOf("") }
     val LightGrayBg = Color(0xFFF0F0F0)
@@ -45,14 +40,12 @@ fun InterpretScreen(
         topBar = {
             HamburgerTopBar(
                 title = "LSM Interpret",
-                userName = userName ?: "Usuario",
-                onProfileClick = onNavigateToProfile, // <--- 2. CONECTAMOS AQUÍ
+                userName = userName,
+                onProfileClick = onNavigateToProfile,
                 onSettingsClick = { /* TODO: Navegar a config */ },
                 onLogoutClick = {
-                    coroutineScope.launch {
-                        userSession.clear()
-                        onLogoutSuccess()
-                    }
+                    viewModel.logout()
+                    onLogoutSuccess()
                 }
             )
         },

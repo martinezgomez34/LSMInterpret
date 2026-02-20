@@ -18,21 +18,19 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.eduard034.lmsinterpret.feature.interpret.presentation.viewmodels.SenaDetailViewModel
-import com.eduard034.lmsinterpret.feature.interpret.presentation.viewmodels.SenaDetailViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SenaDetailScreen(
-    nombreSena: String, // nombre que recibimos de la pantalla anterior, lo ideal seria el id
-    factory: SenaDetailViewModelFactory,
+    nombreSena: String,
+    viewModel: SenaDetailViewModel = hiltViewModel(),
     onBackClick: () -> Unit
 ) {
-    val viewModel: SenaDetailViewModel = viewModel(factory = factory)
-    // cargamos los datos al iniciar
+    // Cargamos los datos al iniciar usando el parámetro que llega a la pantalla
     LaunchedEffect(nombreSena) {
         viewModel.loadSena(nombreSena)
     }
@@ -56,7 +54,7 @@ fun SenaDetailScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White //
+                    containerColor = Color.White
                 )
             )
         },
@@ -76,8 +74,6 @@ fun SenaDetailScreen(
                 ) {
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Imagenes lado a lado o Scroll si son muchas
-                    // Usamos LazyRow para que si hay 3 imagenes, se pueda deslizar
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         modifier = Modifier.fillMaxWidth().height(200.dp)
@@ -97,7 +93,6 @@ fun SenaDetailScreen(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // Titulo Principal
                     Text(
                         text = sena.nombre,
                         fontSize = 32.sp,
@@ -105,7 +100,6 @@ fun SenaDetailScreen(
                         color = Color.Black
                     )
 
-                    // Categoria
                     Text(
                         text = sena.categoria,
                         fontSize = 16.sp,
@@ -115,7 +109,6 @@ fun SenaDetailScreen(
 
                     Spacer(modifier = Modifier.height(32.dp))
 
-                    // Descripcion Label
                     Text(
                         text = "Descripción:",
                         fontSize = 14.sp,
@@ -125,7 +118,6 @@ fun SenaDetailScreen(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Cuerpo de descripcion
                     Text(
                         text = sena.descripcion,
                         fontSize = 16.sp,

@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -17,39 +16,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.eduard034.lmsinterpret.core.data.local.UserSession
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    factory: ProfileViewModelFactory,
+    viewModel: ProfileViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
-    onLogoutForce: () -> Unit // Llamado cuando se elimina la cuenta
+    onLogoutForce: () -> Unit
 ) {
-    val viewModel: ProfileViewModel = viewModel(factory = factory)
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    // Estados locales para los inputs
     var usernameInput by remember { mutableStateOf("") }
     var newPasswordInput by remember { mutableStateOf("") }
     var confirmPasswordInput by remember { mutableStateOf("") }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
-    // Sincronizar datos cuando cargan
     LaunchedEffect(state.userProfile) {
         state.userProfile?.let {
             usernameInput = it.username
         }
     }
 
-    // Manejo de eventos (Toasts y Navegación)
     LaunchedEffect(state) {
         if (state.error != null) {
             Toast.makeText(context, state.error, Toast.LENGTH_SHORT).show()
@@ -57,7 +50,6 @@ fun ProfileScreen(
         }
         if (state.successMessage != null) {
             Toast.makeText(context, state.successMessage, Toast.LENGTH_SHORT).show()
-            // Limpiar campos de contraseña tras éxito
             newPasswordInput = ""
             confirmPasswordInput = ""
             viewModel.clearMessages()
@@ -78,7 +70,7 @@ fun ProfileScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* Opciones extra si quieres */ }) {
+                    IconButton(onClick = { /* Opciones extra */ }) {
                         Icon(Icons.Default.MoreVert, contentDescription = "Más")
                     }
                 },
@@ -98,11 +90,9 @@ fun ProfileScreen(
                     .verticalScroll(rememberScrollState())
                     .padding(24.dp)
             ) {
-                // --- SECCIÓN DATOS ---
                 Text("Datos del perfil", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Username
                 OutlinedTextField(
                     value = usernameInput,
                     onValueChange = { usernameInput = it },
@@ -112,12 +102,11 @@ fun ProfileScreen(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Correo (Solo lectura)
                 OutlinedTextField(
                     value = state.userProfile?.correo ?: "",
                     onValueChange = {},
                     label = { Text("Correo") },
-                    enabled = false, // Deshabilitado como en la imagen
+                    enabled = false,
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -127,7 +116,6 @@ fun ProfileScreen(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Fake Password Field (Visual)
                 OutlinedTextField(
                     value = "********",
                     onValueChange = {},
@@ -149,7 +137,6 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(40.dp))
 
-                // --- SECCIÓN PASSWORD ---
                 Text("Cambiar contraseña", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -174,7 +161,6 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Botón Guardar Password (Alineado a la derecha)
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
                     Button(
                         onClick = { viewModel.updatePassword(newPasswordInput, confirmPasswordInput) },
@@ -186,10 +172,9 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(40.dp))
 
-                // Botón Eliminar
                 Button(
                     onClick = { showDeleteDialog = true },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE57373)) // Rojo claro
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE57373))
                 ) {
                     Text("Eliminar perfil", color = Color.White)
                 }
@@ -197,7 +182,6 @@ fun ProfileScreen(
         }
     }
 
-    // --- DIÁLOGO DE ELIMINACIÓN ---
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
@@ -226,14 +210,12 @@ fun ProfileScreen(
                         showDeleteDialog = false
                         viewModel.deleteAccount()
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B0000)) // Rojo oscuro
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B0000))
                 ) {
                     Text("Confirmar")
                 }
             },
-            dismissButton = {
-                // Opcional: Botón cancelar si quieres
-            },
+            dismissButton = { /* Opcional */ },
             containerColor = Color.White,
             shape = RoundedCornerShape(16.dp)
         )

@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eduard034.lmsinterpret.feature.interpret.domain.entities.Sena
 import com.eduard034.lmsinterpret.feature.interpret.domain.repositories.InterpretRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class SenaDetailUiState(
     val isLoading: Boolean = false,
@@ -15,7 +17,8 @@ data class SenaDetailUiState(
     val error: String? = null
 )
 
-class SenaDetailViewModel(
+@HiltViewModel // <- Anotación de Hilt
+class SenaDetailViewModel @Inject constructor( // <- Inyección de dependencias
     private val repository: InterpretRepository
 ) : ViewModel() {
 
@@ -27,7 +30,6 @@ class SenaDetailViewModel(
         _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             try {
-
                 val result = repository.getSenaByName(nombre)
 
                 if (result != null) {

@@ -1,16 +1,17 @@
 package com.eduard034.lmsinterpret.feature.profile.presentation
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.eduard034.lmsinterpret.core.data.local.UserSession
 import com.eduard034.lmsinterpret.feature.profile.data.remote.UserProfileDto
 import com.eduard034.lmsinterpret.feature.profile.domain.ProfileRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class ProfileUiState(
     val isLoading: Boolean = false,
@@ -20,7 +21,8 @@ data class ProfileUiState(
     val isAccountDeleted: Boolean = false
 )
 
-class ProfileViewModel(
+@HiltViewModel
+class ProfileViewModel @Inject constructor(
     private val repository: ProfileRepository,
     private val userSession: UserSession
 ) : ViewModel() {
@@ -28,7 +30,6 @@ class ProfileViewModel(
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState = _uiState.asStateFlow()
 
-    // Cargar datos al iniciar
     init {
         loadUserProfile()
     }
@@ -58,10 +59,9 @@ class ProfileViewModel(
             val result = repository.updateUsername(token, currentUser.id, newName)
 
             result.onSuccess {
-                // Actualizamos la sesión local también
                 userSession.saveSession(newName, token)
                 _uiState.update { it.copy(isLoading = false, successMessage = "Nombre actualizado") }
-                loadUserProfile() // Recargar para asegurar consistencia
+                loadUserProfile()
             }.onFailure { e ->
                 _uiState.update { it.copy(isLoading = false, error = "Error al actualizar: ${e.message}") }
             }
@@ -97,7 +97,7 @@ class ProfileViewModel(
             val result = repository.deleteAccount(token, currentUser.id)
 
             result.onSuccess {
-                userSession.clear() // Limpiar sesión local
+                userSession.clear()
                 _uiState.update { it.copy(isLoading = false, isAccountDeleted = true) }
             }.onFailure { e ->
                 _uiState.update { it.copy(isLoading = false, error = "No se pudo eliminar: ${e.message}") }
@@ -107,16 +107,5 @@ class ProfileViewModel(
 
     fun clearMessages() {
         _uiState.update { it.copy(error = null, successMessage = null) }
-    }
-}
-
-// Factory simple
-class ProfileViewModelFactory(
-    private val repository: ProfileRepository,
-    private val userSession: UserSession
-) : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ProfileViewModel(repository, userSession) as T
     }
 }

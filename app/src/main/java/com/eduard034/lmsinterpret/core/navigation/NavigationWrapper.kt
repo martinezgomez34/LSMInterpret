@@ -27,7 +27,6 @@ fun NavigationWrapper() {
                         popUpTo<Screens.Login> { inclusive = true }
                     }
                 },
-
                 onNavigateToRegister = {
                     navController.navigate(Screens.Register)
                 }
@@ -50,7 +49,8 @@ fun NavigationWrapper() {
                 onBackClick = { navController.popBackStack() },
                 onLogoutForce = {
                     navController.navigate(Screens.Login) {
-                        popUpTo(0) { inclusive = true }
+                        // CORRECCIÓN AQUÍ
+                        popUpTo<Screens.Login> { inclusive = true }
                     }
                 }
             )
@@ -66,7 +66,7 @@ fun NavigationWrapper() {
                 },
                 onLogoutSuccess = {
                     navController.navigate(Screens.Login) {
-                        popUpTo(0) { inclusive = true }
+                        popUpTo<Screens.Login> { inclusive = true }
                     }
                 }
             )
