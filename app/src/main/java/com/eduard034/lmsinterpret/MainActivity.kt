@@ -4,8 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.eduard034.lmsinterpret.core.navigation.NavigationWrapper
-import com.eduard034.lmsinterpret.feature.interpret.di.InterpretModule
-import com.eduard034.lmsinterpret.feature.profile.di.ProfileModule
 import com.eduard034.lmsinterpret.ui.theme.LMSInterpretTheme
 
 import dagger.hilt.android.AndroidEntryPoint

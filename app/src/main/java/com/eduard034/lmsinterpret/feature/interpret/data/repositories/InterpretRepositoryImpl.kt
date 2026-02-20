@@ -5,8 +5,8 @@ import com.eduard034.lmsinterpret.feature.interpret.data.datasources.remote.mapp
 import com.eduard034.lmsinterpret.feature.interpret.data.datasources.remote.model.InterpretRequestDto
 import com.eduard034.lmsinterpret.feature.interpret.domain.entities.Sena
 import com.eduard034.lmsinterpret.feature.interpret.domain.repositories.InterpretRepository
-
-class InterpretRepositoryImpl(
+import javax.inject.Inject
+class InterpretRepositoryImpl @Inject constructor(
     private val api: LsmApi
 ) : InterpretRepository {
 
