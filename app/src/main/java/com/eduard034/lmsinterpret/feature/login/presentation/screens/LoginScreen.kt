@@ -11,28 +11,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.eduard034.lmsinterpret.feature.login.presentation.components.AuthButtonColor
 import com.eduard034.lmsinterpret.feature.login.presentation.components.AuthBgColor
 import com.eduard034.lmsinterpret.feature.login.presentation.components.AuthTextField
 import com.eduard034.lmsinterpret.feature.login.presentation.viewmodels.LoginViewModel
-import com.eduard034.lmsinterpret.feature.login.presentation.viewmodels.LoginViewModelFactory
 
 @Composable
 fun LoginScreen(
-    factory: LoginViewModelFactory,
+    viewModel: LoginViewModel = hiltViewModel(),
     onLoginSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit
 ) {
-    // 1. Obtenemos ESPECÍFICAMENTE el LoginViewModel
-    val viewModel: LoginViewModel = viewModel(factory = factory)
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     var correo by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    // 2. Efecto para navegar cuando el login es exitoso
     LaunchedEffect(state.isSuccess) {
         if (state.isSuccess) {
             viewModel.resetState()
@@ -64,7 +60,6 @@ fun LoginScreen(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Inputs usando el componente compartido
         AuthTextField(
             value = correo,
             onValueChange = { correo = it },
@@ -82,7 +77,6 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Botón Login
         Button(
             onClick = { viewModel.login(correo, password) },
             colors = ButtonDefaults.buttonColors(containerColor = AuthButtonColor),
@@ -93,14 +87,13 @@ fun LoginScreen(
                 CircularProgressIndicator(
                     modifier = Modifier.size(24.dp),
                     color = Color.White,
-                    strokeWidth = 2.dp // Opcional: para que no se vea muy grueso al ser pequeño
+                    strokeWidth = 2.dp
                 )
             } else {
                 Text("Sign in", color = Color.Black, fontSize = 16.sp)
             }
         }
 
-        // Mensaje de Error
         if (state.error != null) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
@@ -112,7 +105,6 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(48.dp))
 
-        // Links inferiores
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -125,7 +117,7 @@ fun LoginScreen(
             Text(
                 text = "Forgot password?",
                 color = Color.Blue,
-                modifier = Modifier.clickable { /* TODO: Implementar */ }
+                modifier = Modifier.clickable { }
             )
         }
     }

@@ -11,34 +11,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.eduard034.lmsinterpret.feature.login.presentation.components.AuthButtonColor
 import com.eduard034.lmsinterpret.feature.login.presentation.components.AuthBgColor
 import com.eduard034.lmsinterpret.feature.login.presentation.components.AuthTextField
 import com.eduard034.lmsinterpret.feature.login.presentation.viewmodels.RegisterViewModel
-import com.eduard034.lmsinterpret.feature.login.presentation.viewmodels.RegisterViewModelFactory
 
 @Composable
 fun RegisterScreen(
-    factory: RegisterViewModelFactory,
+    viewModel: RegisterViewModel = hiltViewModel(),
     onRegisterSuccess: () -> Unit,
     onBackClick: () -> Unit
 ) {
-    // 1. Obtenemos ESPECÍFICAMENTE el RegisterViewModel
-    val viewModel: RegisterViewModel = viewModel(factory = factory)
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    // Estados locales del formulario
     var username by remember { mutableStateOf("") }
     var correo by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPass by remember { mutableStateOf("") }
 
-    // Error local para validación de contraseñas
     var passError by remember { mutableStateOf<String?>(null) }
 
-    // 2. Navegación al completar registro
     LaunchedEffect(state.isSuccess) {
         if (state.isSuccess) {
             viewModel.resetState()
@@ -54,7 +48,6 @@ fun RegisterScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Botón Atrás
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.CenterStart
@@ -84,7 +77,6 @@ fun RegisterScreen(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Formulario
         AuthTextField(value = username, onValueChange = { username = it }, label = "Username")
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -96,7 +88,6 @@ fun RegisterScreen(
 
         AuthTextField(value = confirmPass, onValueChange = { confirmPass = it }, label = "Confirm Password", isPassword = true)
 
-        // Error de coincidencia de contraseña (Validación local)
         if (passError != null) {
             Text(
                 text = passError!!,
@@ -108,7 +99,6 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Botón Registrar
         Button(
             onClick = {
                 if (password != confirmPass) {
@@ -128,14 +118,13 @@ fun RegisterScreen(
                 CircularProgressIndicator(
                     modifier = Modifier.size(24.dp),
                     color = Color.White,
-                    strokeWidth = 2.dp // Opcional: para que no se vea muy grueso al ser pequeño
+                    strokeWidth = 2.dp
                 )
             } else {
                 Text("Create account", color = Color.Black, fontSize = 16.sp)
             }
         }
 
-        // Error del servidor (API)
         if (state.error != null) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(

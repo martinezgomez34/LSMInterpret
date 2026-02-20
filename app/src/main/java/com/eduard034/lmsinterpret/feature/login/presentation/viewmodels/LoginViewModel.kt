@@ -2,12 +2,14 @@ package com.eduard034.lmsinterpret.feature.login.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eduard034.lmsinterpret.core.data.local.UserSession // Importa tu UserSession
+import com.eduard034.lmsinterpret.core.data.local.UserSession
 import com.eduard034.lmsinterpret.feature.login.domain.usecases.LoginUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class LoginUiState(
     val isLoading: Boolean = false,
@@ -15,7 +17,8 @@ data class LoginUiState(
     val error: String? = null
 )
 
-class LoginViewModel(
+@HiltViewModel
+class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val userSession: UserSession
 ) : ViewModel() {

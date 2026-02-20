@@ -28,15 +28,13 @@ interface UserApi {
         @Path("username") username: String
     ): UserProfileDto
 
-    // Actualizar nombre
     @PUT("auth/update-profile/{user_id}")
     suspend fun updateProfile(
         @Header("Authorization") token: String,
         @Path("user_id") userId: Int,
         @Body request: UpdateProfileRequest
-    ): Any // Retorna un mensaje json simple
+    ): Any
 
-    // Actualizar contraseña
     @PUT("auth/update-password/{user_id}")
     suspend fun updatePassword(
         @Header("Authorization") token: String,
@@ -44,7 +42,6 @@ interface UserApi {
         @Body request: UpdatePasswordRequest
     ): Any
 
-    // Eliminar cuenta
     @DELETE("auth/user/{user_id}")
     suspend fun deleteAccount(
         @Header("Authorization") token: String,
